@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX Logistics — Staff Portal</title>
+<style>
+  :root{
+    --paper:#EFF3F6; --paper-raised:#FFFFFF; --ink:#101A24;
+    --navy:#0B3A66; --navy-deep:#08243F; --gold:#F5A623; --gold-deep:#D98C0E;
+    --slate:#52616F; --line:#D7DEE5; --success:#1F8A55; --alert:#C0392B;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:Tahoma, Geneva, sans-serif;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4{font-family:Tahoma, Geneva, sans-serif;text-transform:uppercase;letter-spacing:0.02em;margin:0;color:var(--navy-deep);}
+  a{color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+  header{background:var(--navy-deep);border-bottom:3px solid var(--gold);padding:16px 0;}
+  .brand{display:flex;align-items:center;gap:12px;color:#fff;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;}
+  .brand span{color:var(--gold);}
+  .tag-line{color:#9FB1C2;font-size:11.5px;margin-top:2px;text-transform:none;letter-spacing:0;}
+
+  .login-box{max-width:380px;margin:80px auto;background:var(--paper-raised);border:1px solid var(--line);border-radius:4px;padding:32px;box-shadow:0 20px 40px -20px rgba(3,15,29,0.35);}
+  .login-box h2{font-size:20px;text-align:center;margin-bottom:18px;}
+  .form-field{margin-bottom:16px;}
+  .form-field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;color:var(--navy-deep);}
+  .form-field input, .form-field select, .form-field textarea{
+    width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:3px;font-family:inherit;font-size:14px;background:#fff;
+  }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus{outline:none;border-color:var(--navy);}
+  .save-btn{background:var(--navy);color:#fff;border:none;padding:12px 20px;border-radius:3px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.03em;width:100%;}
+  .save-btn:hover{background:var(--navy-deep);}
+  .save-btn.gold{background:var(--gold);color:var(--navy-deep);}
+  .save-btn.gold:hover{background:var(--gold-deep);color:#fff;}
+  .err-msg{color:var(--alert);font-size:13px;margin-top:10px;display:none;}
+  .note{margin-top:20px;font-size:12px;color:var(--slate);background:var(--paper);padding:12px;border-radius:3px;line-height:1.5;}
+
+  main{padding:32px 0 60px;display:none;}
+  .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+  .top-bar .who{font-size:13px;color:var(--slate);}
+  .logout-btn{background:none;border:1.5px solid var(--line);padding:9px 16px;border-radius:3px;font-size:13px;font-weight:600;color:var(--slate);}
+  .logout-btn:hover{border-color:var(--alert);color:var(--alert);}
+
+  .tabs{display:flex;gap:6px;margin-bottom:24px;border-bottom:1px solid var(--line);}
+  .tab-btn{background:none;border:none;padding:12px 18px;font-size:13.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;color:var(--slate);border-bottom:3px solid transparent;}
+  .tab-btn.active{color:var(--navy-deep);border-bottom-color:var(--gold);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1.3fr;gap:24px;align-items:start;}
+  @media (max-width:900px){ .grid2{grid-template-columns:1fr;} }
+  .panel{background:var(--paper-raised);border:1px solid var(--line);border-radius:4px;padding:24px;}
+  .panel h3{font-size:15px;margin-bottom:18px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  .ship-list, .enq-list{list-style:none;margin:0;padding:0;max-height:560px;overflow:auto;}
+  .ship-list li, .enq-list li{padding:12px 10px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .ship-list li:hover, .enq-list li:hover{background:var(--paper);}
+  .ship-list li.selected{background:#FDF0DA;}
+  .tno{font-family:Tahoma, Geneva, sans-serif;font-size:13px;font-weight:700;}
+  .dest{font-size:11.5px;color:var(--slate);}
+  .status-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;}
+  .status-pill.delivered{background:#E5F5EC;color:var(--success);}
+  .status-pill.transit{background:#FDF0DA;color:var(--gold-deep);}
+  .status-pill.customs{background:#E9F0F8;color:var(--navy);}
+  .status-pill.pending{background:#EFEFEF;color:var(--slate);}
+  .status-pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+  .del-btn{background:none;border:1.5px solid var(--line);color:var(--alert);padding:10px 16px;border-radius:3px;font-size:12.5px;font-weight:600;margin-top:10px;width:100%;}
+  .del-btn:hover{background:var(--alert);color:#fff;border-color:var(--alert);}
+  .divider-lbl{font-size:10.5px;letter-spacing:0.1em;color:var(--slate);text-transform:uppercase;margin:20px 0 10px;padding-top:16px;border-top:1px dashed var(--line);font-weight:700;}
+  .empty-note{font-size:13px;color:var(--slate);padding:20px 0;text-align:center;}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--navy-deep);color:#fff;padding:14px 22px;border-radius:3px;font-size:13.5px;box-shadow:0 12px 30px -10px rgba(0,0,0,0.4);border-left:4px solid var(--gold);z-index:999;display:none;}
+
+  .enq-card{padding:16px 4px;border-bottom:1px solid var(--line);}
+  .enq-card .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+  .enq-card .top strong{font-size:14px;}
+  .enq-card .meta{font-size:11.5px;color:var(--slate);margin-top:3px;}
+  .enq-card .body{font-size:13.5px;margin-top:8px;line-height:1.5;}
+  .enq-card .type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;padding:3px 8px;border-radius:12px;background:var(--paper);color:var(--navy);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">FX <span>LOGISTICS</span></div>
+    <div class="tag-line">Staff Portal</div>
+  </div>
+</header>
+
+<div class="wrap" id="loginWrap">
+  <div class="login-box">
+    <h2>Staff Login</h2>
+    <form id="loginForm">
+      <div class="form-field"><label for="s-email">Email</label><input id="s-email" type="email" autocomplete="username" required></div>
+      <div class="form-field"><label for="s-pass">Password</label><input id="s-pass" type="password" autocomplete="current-password" required></div>
+      <button type="submit" class="save-btn">Log In</button>
+      <div class="err-msg" id="loginErr"></div>
+    </form>
+    <div class="note">Staff accounts are created by FX Logistics in the Supabase dashboard (Authentication → Users). There's no public sign-up here.</div>
+  </div>
+</div>
+
+<main id="mainApp">
+  <div class="wrap">
+    <div class="top-bar">
+      <div class="who">Signed in as <strong id="whoEmail"></strong></div>
+      <button class="logout-btn" id="logoutBtn">Log Out</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="shipments">Shipments</button>
+      <button class="tab-btn" data-tab="enquiries">Quote &amp; Contact Enquiries</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-shipments">
+      <div class="grid2">
+        <div class="panel">
+          <h3>All Shipments</h3>
+          <ul class="ship-list" id="shipList"></ul>
+          <button class="save-btn gold" id="newShipBtn" style="margin-top:16px;">+ New Shipment</button>
+        </div>
+        <div class="panel">
+          <h3 id="editorTitle">Select a shipment</h3>
+          <div id="editorEmpty" class="empty-note">Choose a shipment on the left, or create a new one.</div>
+          <form id="shipForm" style="display:none;">
+            <div class="form-field"><label>Tracking Number</label><input id="f-tno" required></div>
+            <div class="row2">
+              <div class="form-field"><label>Origin</label><input id="f-origin" required></div>
+              <div class="form-field"><label>Destination</label><input id="f-dest" required></div>
+            </div>
+            <div class="row2">
+              <div class="form-field"><label>Recipient</label><input id="f-recipient"></div>
+              <div class="form-field"><label>Freight Mode</label>
+                <select id="f-mode"><option>Ocean Freight</option><option>Air Freight</option><option>Warehousing</option></select>
+              </div>
+            </div>
+            <div class="row2">
+              <div class="form-field"><label>Current Status</label>
+                <select id="f-status">
+                  <option>Order Received</option>
+                  <option>Picked Up at Origin</option>
+                  <option>In Transit</option>
+                  <option>Customs Clearance</option>
+                  <option>Out for Delivery</option>
+                  <option>Delivered</option>
+                  <option>Delayed</option>
+                </select>
+              </div>
+              <div class="form-field"><label>Est. Delivery Date</label><input id="f-eta" type="date"></div>
+            </div>
+            <button type="submit" class="save-btn">Save Shipment</button>
+            <button type="button" class="del-btn" id="delShipBtn">Delete Shipment</button>
+
+            <div class="divider-lbl">Add Tracking Update</div>
+            <div class="row2">
+              <div class="form-field"><label>Location</label><input id="u-location"></div>
+              <div class="form-field"><label>Date</label><input id="u-date" type="date"></div>
+            </div>
+            <div class="form-field"><label>Status Note</label><input id="u-note" placeholder="e.g. Departed Guangzhou port"></div>
+            <button type="button" class="save-btn gold" id="addUpdateBtn">Add Update</button>
+
+            <div class="divider-lbl">History</div>
+            <div id="historyList"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-enquiries">
+      <div class="panel">
+        <h3>Quote &amp; Contact Enquiries</h3>
+        <div id="enqList"><div class="empty-note">Loading…</div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  // ---------- Fill these in from Supabase: Project Settings → API ----------
+  const SUPABASE_URL = 'https://qrnavgwcpzljodpupjdb.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFybmF2Z3djcHpsam9kcHVwamRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyNDEzOTQsImV4cCI6MjA5ODgxNzM5NH0._i6EQBHdclz-ZKYIk4Cb_A_o1adw5yS4W7oCKLq2uPI';
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let selectedShipmentId = null;
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    clearTimeout(t._h);
+    t._h = setTimeout(()=>{ t.style.display='none'; }, 2600);
+  }
+  function escapeHtml(str){
+    return String(str ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function fmtDate(d){
+    if(!d) return '—';
+    const dt = new Date(d+'T00:00:00');
+    if(isNaN(dt)) return d;
+    return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  }
+  function fmtDateTime(d){
+    if(!d) return '—';
+    return new Date(d).toLocaleString('en-GB');
+  }
+  const statusClass = s=>{
+    if(s==='Delivered') return 'delivered';
+    if(s==='Customs Clearance' || s==='Out for Delivery') return 'customs';
+    if(s==='Delayed') return 'pending';
+    return 'transit';
+  };
+
+  // ---------- Auth ----------
+  async function checkSession(){
+    const { data: { session } } = await supabase.auth.getSession();
+    if(session){
+      showApp(session);
+    } else {
+      showLogin();
+    }
+  }
+  function showLogin(){
+    document.getElementById('loginWrap').style.display = 'block';
+    document.getElementById('mainApp').style.display = 'none';
+  }
+  function showApp(session){
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('whoEmail').textContent = session.user.email;
+    loadShipments();
+    loadEnquiries();
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const email = document.getElementById('s-email').value.trim();
+    const password = document.getElementById('s-pass').value;
+    const errBox = document.getElementById('loginErr');
+    errBox.style.display = 'none';
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if(error){
+      errBox.textContent = error.message;
+      errBox.style.display = 'block';
+      return;
+    }
+    showApp(data.session);
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+    await supabase.auth.signOut();
+    showLogin();
+  });
+
+  checkSession();
+
+  // ---------- Tabs ----------
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ---------- Shipments ----------
+  async function loadShipments(){
+    const { data: shipments, error } = await supabase
+      .from('shipments')
+      .select('*')
+      .order('created_at', { ascending: false });
+    const list = document.getElementById('shipList');
+    if(error){
+      list.innerHTML = '<div class="empty-note">Could not load shipments: '+escapeHtml(error.message)+'</div>';
+      return;
+    }
+    if(!shipments || shipments.length===0){
+      list.innerHTML = '<div class="empty-note">No shipments yet. Create one below.</div>';
+      return;
+    }
+    list.innerHTML = shipments.map(s=>
+      '<li data-id="'+s.id+'" class="'+(s.id===selectedShipmentId?'selected':'')+'">'
+      +'<div><div class="tno">'+escapeHtml(s.tracking_number)+'</div><div class="dest">'+escapeHtml(s.destination||'')+'</div></div>'
+      +'<span class="status-pill '+statusClass(s.status)+'"><span class="dot"></span>'+escapeHtml(s.status)+'</span>'
+      +'</li>'
+    ).join('');
+    list.querySelectorAll('li').forEach(li=>{
+      li.addEventListener('click', ()=> openEditor(li.dataset.id));
+    });
+  }
+
+  function genTrackingNumber(){
+    return 'FX' + Math.floor(10000000 + Math.random()*89999999);
+  }
+
+  document.getElementById('newShipBtn').addEventListener('click', ()=>{
+    selectedShipmentId = null;
+    document.getElementById('editorTitle').textContent = 'New Shipment';
+    document.getElementById('editorEmpty').style.display='none';
+    const form = document.getElementById('shipForm');
+    form.style.display='block';
+    form.reset();
+    document.getElementById('f-tno').value = genTrackingNumber();
+    document.getElementById('f-tno').readOnly = false;
+    document.getElementById('delShipBtn').style.display='none';
+    document.getElementById('historyList').innerHTML = '<div class="empty-note">Save the shipment first, then add updates.</div>';
+    loadShipments();
+  });
+
+  async function openEditor(id){
+    selectedShipmentId = id;
+    const { data: s, error } = await supabase.from('shipments').select('*').eq('id', id).maybeSingle();
+    if(error || !s) return;
+    document.getElementById('editorTitle').textContent = 'Editing '+s.tracking_number;
+    document.getElementById('editorEmpty').style.display='none';
+    const form = document.getElementById('shipForm');
+    form.style.display='block';
+    document.getElementById('f-tno').value = s.tracking_number;
+    document.getElementById('f-tno').readOnly = true;
+    document.getElementById('f-origin').value = s.origin||'';
+    document.getElementById('f-dest').value = s.destination||'';
+    document.getElementById('f-recipient').value = s.recipient||'';
+    document.getElementById('f-mode').value = s.mode||'Ocean Freight';
+    document.getElementById('f-status').value = s.status||'Order Received';
+    document.getElementById('f-eta').value = s.eta||'';
+    document.getElementById('delShipBtn').style.display='block';
+    await renderHistoryList(id);
+    loadShipments();
+  }
+
+  async function renderHistoryList(shipmentId){
+    const { data: hist } = await supabase
+      .from('shipment_updates')
+      .select('*')
+      .eq('shipment_id', shipmentId)
+      .order('event_date', { ascending: false });
+    const el = document.getElementById('historyList');
+    if(!hist || hist.length===0){ el.innerHTML = '<div class="empty-note">No updates yet.</div>'; return; }
+    el.innerHTML = hist.map(h=>
+      '<div style="padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;">'
+      +'<span style="color:var(--slate);">'+fmtDate(h.event_date)+'</span> &middot; <strong>'+escapeHtml(h.location||'')+'</strong>'
+      +'<div style="color:var(--slate);margin-top:2px;">'+escapeHtml(h.note||'')+'</div>'
+      +'</div>'
+    ).join('');
+  }
+
+  document.getElementById('shipForm').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const tno = document.getElementById('f-tno').value.trim().toUpperCase();
+    if(!tno) return;
+    const payload = {
+      tracking_number: tno,
+      origin: document.getElementById('f-origin').value.trim(),
+      destination: document.getElementById('f-dest').value.trim(),
+      recipient: document.getElementById('f-recipient').value.trim(),
+      mode: document.getElementById('f-mode').value,
+      status: document.getElementById('f-status').value,
+      eta: document.getElementById('f-eta').value || null
+    };
+
+    let result;
+    if(selectedShipmentId){
+      result = await supabase.from('shipments').update(payload).eq('id', selectedShipmentId).select().single();
+    } else {
+      result = await supabase.from('shipments').insert(payload).select().single();
+    }
+    if(result.error){
+      showToast('Error: '+result.error.message);
+      return;
+    }
+    selectedShipmentId = result.data.id;
+    showToast('Shipment '+tno+' saved.');
+    openEditor(selectedShipmentId);
+  });
+
+  document.getElementById('delShipBtn').addEventListener('click', async ()=>{
+    if(!selectedShipmentId) return;
+    if(!confirm('Delete this shipment? This cannot be undone.')) return;
+    const { error } = await supabase.from('shipments').delete().eq('id', selectedShipmentId);
+    if(error){ showToast('Error: '+error.message); return; }
+    showToast('Shipment deleted.');
+    selectedShipmentId = null;
+    document.getElementById('shipForm').style.display='none';
+    document.getElementById('editorEmpty').style.display='block';
+    document.getElementById('editorTitle').textContent = 'Select a shipment';
+    loadShipments();
+  });
+
+  document.getElementById('addUpdateBtn').addEventListener('click', async ()=>{
+    if(!selectedShipmentId){
+      showToast('Save the shipment before adding updates.');
+      return;
+    }
+    const loc = document.getElementById('u-location').value.trim();
+    const date = document.getElementById('u-date').value;
+    const note = document.getElementById('u-note').value.trim();
+    if(!loc || !date){ showToast('Add a location and date for the update.'); return; }
+    const { error } = await supabase.from('shipment_updates').insert({
+      shipment_id: selectedShipmentId, event_date: date, location: loc, note
+    });
+    if(error){ showToast('Error: '+error.message); return; }
+    document.getElementById('u-location').value='';
+    document.getElementById('u-date').value='';
+    document.getElementById('u-note').value='';
+    await renderHistoryList(selectedShipmentId);
+    showToast('Tracking update added.');
+  });
+
+  // ---------- Enquiries ----------
+  async function loadEnquiries(){
+    const { data: enquiries, error } = await supabase
+      .from('quote_requests')
+      .select('*')
+      .order('created_at', { ascending: false });
+    const box = document.getElementById('enqList');
+    if(error){
+      box.innerHTML = '<div class="empty-note">Could not load enquiries: '+escapeHtml(error.message)+'</div>';
+      return;
+    }
+    if(!enquiries || enquiries.length===0){
+      box.innerHTML = '<div class="empty-note">No enquiries yet.</div>';
+      return;
+    }
+    box.innerHTML = enquiries.map(q=>
+      '<div class="enq-card">'
+        +'<div class="top">'
+          +'<strong>'+escapeHtml(q.full_name)+'</strong>'
+          +'<span class="type">'+escapeHtml(q.request_type)+'</span>'
+        +'</div>'
+        +'<div class="meta">'+escapeHtml(q.email)+(q.phone?' · '+escapeHtml(q.phone):'')+' · '+fmtDateTime(q.created_at)+'</div>'
+        +'<div class="body">'
+          +(q.service_type ? '<strong>Service:</strong> '+escapeHtml(q.service_type)+'<br>' : '')
+          +(q.origin || q.destination ? '<strong>Route:</strong> '+escapeHtml(q.origin||'—')+' → '+escapeHtml(q.destination||'—')+'<br>' : '')
+          +(q.cargo_description ? '<strong>Cargo:</strong> '+escapeHtml(q.cargo_description)+'<br>' : '')
+          +(q.weight_kg ? '<strong>Weight:</strong> '+escapeHtml(q.weight_kg)+' kg<br>' : '')
+          +(q.volume_cbm ? '<strong>Volume:</strong> '+escapeHtml(q.volume_cbm)+' cbm<br>' : '')
+          +(q.notes ? '<strong>Notes:</strong> '+escapeHtml(q.notes) : '')
+        +'</div>'
+      +'</div>'
+    ).join('');
+  }
+</script>
+</body>
+</html>
