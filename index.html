@@ -219,23 +219,6 @@
   .quote-layout{display:grid;grid-template-columns:1.4fr 1fr;gap:32px;align-items:start;}
   @media (max-width:920px){ .quote-layout{grid-template-columns:1fr;} }
 
-  /* ---------- Price Calculator ---------- */
-  .calc-layout{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
-  @media (max-width:920px){ .calc-layout{grid-template-columns:1fr;} }
-  .calc-preview{background:var(--navy-deep);color:#fff;border-radius:4px;padding:18px 20px;margin-top:18px;display:flex;justify-content:space-between;align-items:center;}
-  .calc-preview .lbl{font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;color:#9FB1C2;}
-  .calc-preview .amt{font-size:24px;font-weight:700;color:var(--gold);}
-  .cart-table{width:100%;border-collapse:collapse;margin-top:10px;}
-  .cart-table th{text-align:left;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--slate);padding:8px 8px;border-bottom:1px solid var(--line);}
-  .cart-table td{padding:12px 8px;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:top;}
-  .cart-table .item-name{font-weight:700;color:var(--navy-deep);}
-  .cart-table .item-detail{color:var(--slate);font-size:12px;margin-top:2px;}
-  .cart-table .rm-btn{background:none;border:1.5px solid var(--line);color:var(--alert);width:26px;height:26px;border-radius:3px;font-size:14px;line-height:1;}
-  .cart-table .rm-btn:hover{background:var(--alert);color:#fff;border-color:var(--alert);}
-  .calc-total-bar{display:flex;justify-content:space-between;align-items:center;background:var(--paper);border-radius:4px;padding:18px 20px;margin-top:16px;}
-  .calc-total-bar .lbl{font-size:12.5px;color:var(--slate);text-transform:uppercase;letter-spacing:0.06em;font-weight:700;}
-  .calc-total-bar .amt{font-size:26px;font-weight:700;color:var(--navy-deep);}
-
   /* ---------- Contact ---------- */
   .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;}
   .office-card{background:var(--paper-raised);border:1px solid var(--line);border-radius:4px;padding:22px;margin-bottom:16px;}
@@ -334,7 +317,6 @@
       <a href="#services" data-view="services">Services</a>
       <a href="#track" data-view="track">Track Shipment</a>
       <a href="#quote" data-view="quote">Price Quote</a>
-      <a href="#calculator" data-view="calculator">Price Calculator</a>
       <a href="#contact" data-view="contact">Contact</a>
       <a href="#quote" data-view="quote" data-focus="q-name" class="cta-btn">Get a Quote</a>
     </nav>
@@ -686,56 +668,6 @@
   </section>
 </div>
 
-<!-- ============ PRICE CALCULATOR ============ -->
-<div class="view" id="view-calculator">
-  <section style="padding-top:56px;">
-    <div class="wrap">
-      <div class="section-head" style="max-width:720px;">
-        <span class="pill-badge">Price Calculator</span>
-        <h2 style="margin-top:14px;">What will it cost to ship?</h2>
-        <p>Pick what you're shipping below and we'll show you the per-item shipping charge instantly. Add as many items as you like to see a running total.</p>
-      </div>
-      <div class="calc-layout">
-        <div class="panel">
-          <h3>Add an item</h3>
-          <div class="form-field"><label for="c-category">Category</label>
-            <select id="c-category"></select>
-          </div>
-          <div class="form-field"><label for="c-item">Item</label>
-            <select id="c-item"></select>
-          </div>
-          <div class="form-field" id="c-condition-wrap" style="display:none;"><label for="c-condition">Condition</label>
-            <select id="c-condition"></select>
-          </div>
-          <div class="form-field" id="c-qty-wrap"><label id="c-qty-label" for="c-qty">Quantity</label>
-            <input id="c-qty" type="number" min="1" step="1" value="1">
-          </div>
-          <div class="calc-preview">
-            <span class="lbl">This item</span>
-            <span class="amt" id="c-preview-amt">$0</span>
-          </div>
-          <button type="button" class="save-btn gold" id="c-add-btn" style="margin-top:14px;">Add to List</button>
-        </div>
-
-        <div class="panel">
-          <h3>Your shipment</h3>
-          <div id="cartEmpty" class="empty-note">No items added yet — build your list on the left.</div>
-          <table class="cart-table" id="cartTable" style="display:none;">
-            <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th></th></tr></thead>
-            <tbody id="cartBody"></tbody>
-          </table>
-          <div class="calc-total-bar">
-            <span class="lbl">Estimated Total</span>
-            <span class="amt" id="cartTotalAmt">$0</span>
-          </div>
-          <a href="#quote" data-view="quote" data-focus="q-name" class="btn btn-navy" style="margin-top:18px;width:100%;justify-content:center;">Request Full Shipping Quote</a>
-          <p style="font-size:12px;color:var(--slate);margin-top:14px;line-height:1.6;">These are per-item shipping charges as goods leave origin and does not include duties or local delivery. Final pricing is confirmed when you book — figures here are estimates.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-</div>
-
 <!-- ============ CONTACT ============ -->
 <div class="view" id="view-contact">
   <section style="padding-top:56px;">
@@ -837,12 +769,12 @@
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
   // ---------- Fill these in from Supabase: Project Settings → API ----------
-  const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+  const SUPABASE_URL = 'https://qrnavgwcpzljodpupjdb.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFybmF2Z3djcHpsam9kcHVwamRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyNDEzOTQsImV4cCI6MjA5ODgxNzM5NH0._i6EQBHdclz-ZKYIk4Cb_A_o1adw5yS4W7oCKLq2uPI';
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // ---------- View routing ----------
-  const views = ['home','about','services','track','quote','calculator','contact'];
+  const views = ['home','about','services','track','quote','contact'];
   function showView(name){
     if(!views.includes(name)) name = 'home';
     views.forEach(v=>{
@@ -1006,193 +938,7 @@
       showToast('Something went wrong sending your message. Please email info@fxlogistics.org.');
     }
   });
-
-  // ---------- Price Calculator ----------
-  const CATALOG = {
-    "Apple": [
-      { id:'iphone', name:'iPhone', type:'iphone-tiered' },
-      { id:'ipad', name:'iPad', type:'condition', prices:{'Brand New':120,'Used':100} },
-      { id:'magic-kb', name:'Magic Keyboard', type:'flat', price:50 },
-      { id:'magic-mouse', name:'Magic Mouse', type:'flat', price:20 },
-      { id:'airpods', name:'AirPods', type:'flat', price:25 },
-      { id:'airpods-max', name:'AirPods Max', type:'flat', price:70 }
-    ],
-    "Samsung": [
-      { id:'samsung-phone', name:'Samsung Phone', type:'condition', prices:{'Brand New':100,'Used':80} },
-      { id:'samsung-tablet', name:'Samsung Tablet', type:'condition', prices:{'Brand New':110,'Used':90} }
-    ],
-    "Other Phones & Tablets": [
-      { id:'other-tablet', name:'Other Tablet', type:'flat', price:80 },
-      { id:'other-android', name:'Other Android Phone (below $500 value)', type:'condition', prices:{'Brand New':60,'Used':40} }
-    ],
-    "Smartwatches": [
-      { id:'watch-high', name:'High Value Smart Watch', type:'range-select', tiers:[50,60,70] },
-      { id:'watch-low', name:'Low Value Smart Watch', type:'flat', price:20 }
-    ],
-    "Laptops": [
-      { id:'macbook-13', name:'MacBook 13" / 14"', type:'condition', prices:{'Brand New':150,'Used':110} },
-      { id:'macbook-15', name:'MacBook 15" / 16"', type:'condition', prices:{'Brand New':200,'Used':120} },
-      { id:'alienware', name:'Alienware Laptop', type:'flat', price:150 },
-      { id:'other-laptop-above', name:'Other Laptop (above $500 value)', type:'flat', price:120 },
-      { id:'other-laptop-below', name:'Other Laptop (below $500 value)', type:'flat', price:100 }
-    ],
-    "Cameras & Drones": [
-      { id:'camera', name:'Camera', type:'flat', price:80 },
-      { id:'drone', name:'Drone', type:'flat', price:150 }
-    ],
-    "Gaming": [
-      { id:'ps-console', name:'PlayStation Console', type:'flat', price:120 }
-    ],
-    "Fashion": [
-      { id:'sneakers', name:'Sneakers', type:'flat', price:30 }
-    ],
-    "Home Goods": [
-      { id:'home-materials', name:'Non-Electronic Home Materials', type:'perkg', price:15 }
-    ]
-  };
-
-  let cartItems = [];
-
-  const catSelect = document.getElementById('c-category');
-  const itemSelect = document.getElementById('c-item');
-  const condWrap = document.getElementById('c-condition-wrap');
-  const condSelect = document.getElementById('c-condition');
-  const qtyInput = document.getElementById('c-qty');
-  const qtyLabel = document.getElementById('c-qty-label');
-
-  Object.keys(CATALOG).forEach(cat=>{
-    const opt = document.createElement('option');
-    opt.value = cat; opt.textContent = cat;
-    catSelect.appendChild(opt);
-  });
-
-  function currentItem(){
-    const cat = catSelect.value;
-    const id = itemSelect.value;
-    return (CATALOG[cat]||[]).find(i=>i.id===id);
-  }
-
-  function populateItems(){
-    itemSelect.innerHTML = '';
-    (CATALOG[catSelect.value]||[]).forEach(i=>{
-      const opt = document.createElement('option');
-      opt.value = i.id; opt.textContent = i.name;
-      itemSelect.appendChild(opt);
-    });
-    populateConditions();
-  }
-
-  function populateConditions(){
-    const item = currentItem();
-    if(!item) return;
-    if(item.type==='condition'){
-      condWrap.style.display='block';
-      condSelect.innerHTML = Object.keys(item.prices).map(c=>'<option value="'+c+'">'+c+'</option>').join('');
-    } else if(item.type==='iphone-tiered'){
-      condWrap.style.display='block';
-      condSelect.innerHTML = '<option value="Brand New">Brand New</option><option value="Used">Used</option>';
-    } else if(item.type==='range-select'){
-      condWrap.style.display='block';
-      condSelect.innerHTML = item.tiers.map(p=>'<option value="'+p+'">$'+p+'</option>').join('');
-    } else {
-      condWrap.style.display='none';
-    }
-    if(item.type==='perkg'){
-      qtyLabel.textContent = 'Weight (KG)';
-      qtyInput.step = '0.1';
-    } else {
-      qtyLabel.textContent = 'Quantity';
-      qtyInput.step = '1';
-    }
-    updatePreview();
-  }
-
-  function computeLineTotal(item, condition, qty){
-    qty = Math.max(qty || 0, 0);
-    switch(item.type){
-      case 'flat': return item.price * qty;
-      case 'perkg': return item.price * qty;
-      case 'condition': return (item.prices[condition]||0) * qty;
-      case 'range-select': return (parseFloat(condition)||0) * qty;
-      case 'iphone-tiered':
-        if(condition==='Used') return 70 * qty;
-        return (qty>=4 ? 90 : 100) * qty;
-      default: return 0;
-    }
-  }
-
-  function lineDetailLabel(item, condition){
-    if(item.type==='condition' || item.type==='iphone-tiered') return condition;
-    if(item.type==='range-select') return '$'+condition+' tier';
-    if(item.type==='perkg') return 'per kg';
-    return '';
-  }
-
-  function updatePreview(){
-    const item = currentItem();
-    if(!item){ document.getElementById('c-preview-amt').textContent = '$0'; return; }
-    const qty = parseFloat(qtyInput.value) || 0;
-    const condition = condWrap.style.display==='block' ? condSelect.value : null;
-    const total = computeLineTotal(item, condition, qty);
-    document.getElementById('c-preview-amt').textContent = '$'+total.toFixed(2).replace(/\.00$/,'');
-  }
-
-  catSelect.addEventListener('change', populateItems);
-  itemSelect.addEventListener('change', populateConditions);
-  condSelect.addEventListener('change', updatePreview);
-  qtyInput.addEventListener('input', updatePreview);
-
-  populateItems();
-
-  function renderCart(){
-    const body = document.getElementById('cartBody');
-    const table = document.getElementById('cartTable');
-    const empty = document.getElementById('cartEmpty');
-    if(cartItems.length===0){
-      table.style.display='none';
-      empty.style.display='block';
-    } else {
-      table.style.display='table';
-      empty.style.display='none';
-      body.innerHTML = cartItems.map((row,idx)=>
-        '<tr>'
-        +'<td><div class="item-name">'+row.name+'</div>'+(row.detail?'<div class="item-detail">'+row.detail+'</div>':'')+'</td>'
-        +'<td>'+row.qty+(row.isWeight?' kg':'')+'</td>'
-        +'<td>$'+row.total.toFixed(2).replace(/\.00$/,'')+'</td>'
-        +'<td><button type="button" class="rm-btn" data-idx="'+idx+'">&times;</button></td>'
-        +'</tr>'
-      ).join('');
-      body.querySelectorAll('.rm-btn').forEach(b=>{
-        b.addEventListener('click', ()=>{
-          cartItems.splice(parseInt(b.dataset.idx,10),1);
-          renderCart();
-        });
-      });
-    }
-    const total = cartItems.reduce((sum,r)=>sum+r.total,0);
-    document.getElementById('cartTotalAmt').textContent = '$'+total.toFixed(2).replace(/\.00$/,'');
-  }
-
-  document.getElementById('c-add-btn').addEventListener('click', ()=>{
-    const item = currentItem();
-    if(!item) return;
-    const qty = parseFloat(qtyInput.value) || 0;
-    if(qty<=0){ showToast('Enter a quantity above 0.'); return; }
-    const condition = condWrap.style.display==='block' ? condSelect.value : null;
-    const total = computeLineTotal(item, condition, qty);
-    cartItems.push({
-      name: item.name,
-      detail: lineDetailLabel(item, condition),
-      qty: item.type==='perkg' ? qty : Math.round(qty),
-      isWeight: item.type==='perkg',
-      total
-    });
-    renderCart();
-    showToast(item.name+' added to your list.');
-  });
-
 </script>
-
 
 </body>
 </html>
